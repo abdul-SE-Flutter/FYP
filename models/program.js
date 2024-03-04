@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const scholarshipProgramSchema = new Schema(
   {
     // Common fields
+    imageUrl: String,
     targetedRegions: {
       type: [String],
       required: true,
@@ -17,7 +18,6 @@ const scholarshipProgramSchema = new Schema(
     minQualification: { type: String, required: true },
     description: { type: String, required: true },
     title: { type: String, required: true },
-    amount: String,
     durationOfProgram: String,
   },
   {

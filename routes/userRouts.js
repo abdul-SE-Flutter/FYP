@@ -23,7 +23,6 @@ function fileFilter(req, file, cb) {
 router.post(
   "/register",
   multer({ storage: storage, fileFilter: fileFilter }).single("user_image"),
-
   check("email", "Invalid Email address")
     .isEmail()
     .escape()

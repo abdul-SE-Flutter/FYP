@@ -10,8 +10,9 @@ const fs = require("fs");
 const path = require("path");
 
 const { validationResult } = require("express-validator");
+const { default: mongoose } = require("mongoose");
 
-exports.postProgrma = async (req, res, next) => {
+exports.postProgram = async (req, res, next) => {
   const errors = validationResult(req);
   try {
     if (!errors.isEmpty()) {
@@ -47,6 +48,7 @@ exports.postProgrma = async (req, res, next) => {
       durationOfProgram: durationOfProgram,
     };
     let program;
+    let programSchema;
     switch (minQualification) {
       case "CollegeStudentProgram":
         const collegeStudentProgram = new CollegeStudentProgram({
@@ -54,7 +56,7 @@ exports.postProgrma = async (req, res, next) => {
           minSHCPrcntg: req.body.minSHCPrcntg,
         });
         program = await collegeStudentProgram.save();
-
+        programSchema = collegeStudentProgram;
         break;
       case "UniversityStudentProgram":
         const universityStudentProgram = new UniversityStudentProgram({
@@ -64,7 +66,9 @@ exports.postProgrma = async (req, res, next) => {
           minSSCPrcntg: req.body.minSSCPrcntg,
           minSemester: req.body.minSemester,
         });
+
         program = await universityStudentProgram.save();
+        programSchema = universityStudentProgram;
         break;
       case "MSStudentProgram":
         const msStudentProgram = new MSStudentProgram({
@@ -74,6 +78,7 @@ exports.postProgrma = async (req, res, next) => {
             req.body.requiredEmployeeOfPublicSector,
         });
         program = await msStudentProgram.save();
+        programSchema = msStudentProgram;
         break;
       case "PhdStudentProgram":
         const phdSyudentProgram = new PhdStudentProgram({
@@ -85,6 +90,7 @@ exports.postProgrma = async (req, res, next) => {
             req.body.firstDivisionThroughtAcademicia,
         });
         program = await phdSyudentProgram.save();
+        programSchema = phdSyudentProgram;
         break;
       default:
         const err = new Error(
@@ -93,13 +99,22 @@ exports.postProgrma = async (req, res, next) => {
         err.statusCode = 422;
         throw err;
     }
-
+    if (program && req.file) {
+      programSchema.imageUrl =
+        "http://localhost:8080/images/posts/" + req.file.filename;
+      await programSchema.save();
+    }
     res.status(201).json({
       message: `${minQualification} program posted to DB`,
       programId: program._id,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
+    if (req.file) {
+      clearFile(
+        path.join(__dirname, "..", "images", "posts/") + req.file.filename
+      );
+    }
     next(err);
   }
 };
@@ -107,13 +122,21 @@ exports.postProgrma = async (req, res, next) => {
 exports.deleteProgram = async (req, res, next) => {
   try {
     const programId = programIDValidator.validateID(req.params.programId);
-    const success = await Program.findByIdAndDelete(programId);
-    if (!success) {
-      throw new Error(`program with id : ${programId} not found`);
+    const program = await Program.findByIdAndDelete(programId);
+    if (!program) {
+      const err = new Error(`program with id : ${programId} not found`);
+      err.statusCode = 404;
+      throw err;
+    }
+    if (program.imageUrl) {
+      clearFile(
+        path.join(__dirname, "..", "images", "posts/") +
+          path.basename(program.imageUrl)
+      );
     }
     res
       .status(200)
-      .json({ message: "program deleted", programId: success._id });
+      .json({ message: "program deleted", programId: program._id });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     next(err);
@@ -123,15 +146,34 @@ exports.deleteProgram = async (req, res, next) => {
 exports.updateProgram = async (req, res, next) => {
   try {
     const programId = programIDValidator.validateID(req.params.programId);
-    const success = await Program.findByIdAndUpdate(programId, req.body);
-    if (!success) {
+    const program = await Program.findByIdAndUpdate(programId);
+    Object.assign(program, req.body); // Update program fields
+    if (!program) {
       throw new Error(`program with id : ${programId} not found`);
     }
+    let imageUrl = program.imageUrl || null;
+
+    if (req.file) {
+      imageUrl = "http://localhost:8080/images/posts/" + req.file.filename;
+      if (program.imageUrl) {
+        clearFile(
+          path.join(__dirname, "..", "images", "posts/") +
+            path.basename(program.imageUrl)
+        );
+      }
+    }
+    if (imageUrl) {
+      program.imageUrl = imageUrl;
+    }
+    await program.save();
     res
       .status(200)
-      .json({ message: "program updated", programId: success._id });
+      .json({ message: "program updated", programId: program._id });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
+    if (req.file) {
+      clearFile(path.join(__dirname, "images", "posts/") + req.file.filename);
+    }
     next(err);
   }
 };
@@ -168,4 +210,12 @@ exports.getPrograms = async (req, res, next) => {
     if (!err.statusCode) err.statusCode = 500;
     next(err);
   }
+};
+
+const clearFile = (pathToFile) => {
+  fs.unlink(pathToFile, (err) => {
+    if (err) {
+      console.log("failed to delete file");
+    }
+  });
 };

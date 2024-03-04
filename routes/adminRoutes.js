@@ -3,10 +3,30 @@ const { body } = require("express-validator");
 const programController = require("../controllers/admin");
 const adminController = require("../controllers/adminUserController");
 const router = express.Router();
-
-router.post("/program", programController.postProgrma);
+const multer = require("multer");
+const storage = require("../multer/useMulter").getStorage("images/posts");
+function fileFilter(req, file, cb) {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+router.post(
+  "/program",
+  multer({ storage: storage, fileFilter: fileFilter }).single("programImg"),
+  programController.postProgram
+);
 router.delete("/program/:programId", programController.deleteProgram);
-router.put("/program/:programId", programController.updateProgram);
+router.put(
+  "/program/:programId",
+  multer({ storage: storage, fileFilter: fileFilter }).single("programImg"),
+  programController.updateProgram
+);
 router.get("/program/:programId", programController.getSingleProgram);
 router.get("/programs", programController.getPrograms);
 

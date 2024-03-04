@@ -128,17 +128,20 @@ exports.updateUser = async (req, res, next) => {
       err.statusCode = 404;
       throw err;
     }
-    await User.findOneAndUpdate(user._id, req.body);
+
+    Object.assign(user, req.body);
     await user.save();
 
     let imageUrl = user.imageUrl || null;
     if (req.file) {
       imageUrl =
         "http://localhost:8080/images/user_profile_pics/" + req.file.filename;
-      clearFile(
-        path.join(__dirname, "..", "images", "user_profile_pics/") +
-          path.basename(user.imageUrl)
-      );
+      if (user.imageUrl) {
+        clearFile(
+          path.join(__dirname, "..", "images", "user_profile_pics/") +
+            path.basename(user.imageUrl)
+        );
+      }
     }
 
     if (imageUrl) {
