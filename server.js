@@ -4,7 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const authRoutes = require("./routes/userRouts");
+const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 //Atlas connection=> mongodb+srv://root:root@pakoppertunityhub.o7g7hv4.mongodb.net/?retryWrites=true&w=majority
 
