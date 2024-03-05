@@ -1,5 +1,5 @@
 // const bcrypt = require('bcrypt');
-const idValidator = require("../controllers/utils/IdValidator");
+const idValidator = require("./utils/IdValidator");
 const {
   User,
   CollegeStudent,

@@ -1,7 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
-const programController = require("../controllers/admin");
-const adminController = require("../controllers/adminUserController");
+const programController = require("../controllers/admin/admin");
+const adminController = require("../controllers/admin/adminUserController");
 const router = express.Router();
 const multer = require("multer");
 const storage = require("../multer/useMulter").getStorage("images/posts");

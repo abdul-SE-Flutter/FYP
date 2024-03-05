@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const userRoutes = require("./routes/userRoutes");
 //Atlas connection=> mongodb+srv://root:root@pakoppertunityhub.o7g7hv4.mongodb.net/?retryWrites=true&w=majority
 
 const MONGODB_URL = "mongodb://localhost:27017/pakOppertunityHub";
@@ -18,9 +19,9 @@ app.use(cors());
 app.use(bodyParser.json()); // application/json
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-app.use("/user", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-
+app.use("/user", userRoutes);
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;

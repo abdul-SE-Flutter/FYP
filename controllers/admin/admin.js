@@ -4,8 +4,8 @@ const {
   UniversityStudentProgram,
   MSStudentProgram,
   PhdStudentProgram,
-} = require("../models/program");
-const programIDValidator = require("../controllers/utils/IdValidator");
+} = require("../../models/program");
+const programIDValidator = require("../utils/IdValidator");
 const fs = require("fs");
 const path = require("path");
 

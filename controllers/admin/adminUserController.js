@@ -1,6 +1,6 @@
 // Admins control on users
-const { User } = require("../models/user");
-const { deleteAccount } = require("../controllers/user");
+const { User } = require("../../models/user");
+const { deleteAccount } = require("../auth");
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find();

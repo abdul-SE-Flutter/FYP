@@ -2,7 +2,7 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const { User } = require("../models/user");
-const userController = require("../controllers/user");
+const userController = require("../controllers/auth");
 const router = express.Router();
 const multer = require("multer");
 const storage = require("../multer/useMulter").getStorage(
