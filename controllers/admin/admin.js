@@ -157,7 +157,7 @@ exports.updateProgram = async (req, res, next) => {
       imageUrl = "http://localhost:8080/images/posts/" + req.file.filename;
       if (program.imageUrl) {
         clearFile(
-          path.join(__dirname, "..", "images", "posts/") +
+          path.join(__dirname, "..", "..", "images", "posts/") +
             path.basename(program.imageUrl)
         );
       }
@@ -172,7 +172,9 @@ exports.updateProgram = async (req, res, next) => {
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     if (req.file) {
-      clearFile(path.join(__dirname, "images", "posts/") + req.file.filename);
+      clearFile(
+        path.join(__dirname, "..", "..", "images", "posts/") + req.file.filename
+      );
     }
     next(err);
   }
@@ -198,13 +200,13 @@ exports.getPrograms = async (req, res, next) => {
   try {
     const programs = await Program.find();
     if (!programs || programs.length == 0) {
-      const err = new Error("Could not find any program");
+      const err = new Error("Could not find any program in database");
       err.statusCode = 404;
       throw err;
     }
     res.status(200).json({
       count: programs.length,
-      data: programs,
+      data: { ...programs._doc },
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
