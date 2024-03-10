@@ -14,6 +14,7 @@ const agentSchema = new Schema({
 agentSchema.methods.addCandidate = function (id) {
   try {
     id_validator.validateID(id);
+    this.findOne;
     this.candidates.push(id);
   } catch (err) {
     console.log(err);

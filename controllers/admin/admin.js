@@ -5,12 +5,14 @@ const {
   MSStudentProgram,
   PhdStudentProgram,
 } = require("../../models/program");
-const programIDValidator = require("../utils/IdValidator");
 const fs = require("fs");
 const path = require("path");
-
+const programIDValidator = require("../utils/IdValidator");
+const { getPrograms, getSingleProgram, clearFile } = require("../utils/shared");
 const { validationResult } = require("express-validator");
-const { default: mongoose } = require("mongoose");
+
+exports.getPrograms = getPrograms;
+exports.getSingleProgram = getSingleProgram;
 
 exports.postProgram = async (req, res, next) => {
   const errors = validationResult(req);
@@ -178,46 +180,4 @@ exports.updateProgram = async (req, res, next) => {
     }
     next(err);
   }
-};
-
-exports.getSingleProgram = async (req, res, next) => {
-  try {
-    const programId = programIDValidator.validateID(req.params.programId);
-    const result = await Program.findById(programId);
-    if (!result) {
-      throw new Error(`program with id : ${programId} not found`);
-    }
-    res
-      .status(200)
-      .json({ message: "program found", data: { ...result._doc } });
-  } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
-  }
-};
-
-exports.getPrograms = async (req, res, next) => {
-  try {
-    const programs = await Program.find();
-    if (!programs || programs.length == 0) {
-      const err = new Error("Could not find any program in database");
-      err.statusCode = 404;
-      throw err;
-    }
-    res.status(200).json({
-      count: programs.length,
-      data: { ...programs._doc },
-    });
-  } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
-  }
-};
-
-const clearFile = (pathToFile) => {
-  fs.unlink(pathToFile, (err) => {
-    if (err) {
-      console.log("failed to delete file");
-    }
-  });
 };

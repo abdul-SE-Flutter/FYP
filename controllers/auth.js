@@ -6,12 +6,14 @@ const {
   UniversityStudent,
   PostGraduateStudent,
 } = require("../models/user");
-
-const fs = require("fs");
+const {
+  deleteAccount,
+  clearFile,
+  signWithEmailAndPassword,
+} = require("./utils/shared");
 const path = require("path");
 
 const { validationResult } = require("express-validator");
-const { default: mongoose } = require("mongoose");
 
 exports.signup = async (req, res, next) => {
   const err = validationResult(req);
@@ -93,30 +95,7 @@ exports.signup = async (req, res, next) => {
   }
 };
 
-exports.signWithEmailAndPassword = async (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const err = validationResult(req);
-  try {
-    if (!err.isEmpty()) {
-      const error = new Error(err.array()[0]?.msg);
-      error.statusCode = 422;
-      error.data = err;
-      throw error;
-    }
-    const user = await User.findOne({ email: email, password: password });
-    if (!user) {
-      const error = new Error("Email or password could not matched...");
-      error.statusCode = 422;
-      error.data = err;
-      throw error;
-    }
-    res.status(200).json(user._doc);
-  } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
-  }
-};
+exports.signWithEmailAndPassword = signWithEmailAndPassword;
 
 exports.updateUser = async (req, res, next) => {
   try {
@@ -161,34 +140,4 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-exports.deleteAccount = async (req, res, next) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user || !mongoose.Types.ObjectId.isValid(req.params.id)) {
-      const error = new Error(
-        `User with  id: [${req.params.id}] not found or id might be incorrect`
-      );
-      error.statusCode = 422;
-      throw error;
-    }
-
-    if (user.imageUrl) {
-      const image = path.basename(user.imageUrl);
-      clearFile(
-        path.join(__dirname, "..", "images", "user_profile_pics/") + image
-      );
-    }
-
-    res.status(200).json({ message: "user deleted" });
-  } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
-  }
-};
-const clearFile = (pathToFile) => {
-  fs.unlink(pathToFile, (err) => {
-    if (err) {
-      console.log("failed to delete file");
-    }
-  });
-};
+exports.deleteAccount = deleteAccount;

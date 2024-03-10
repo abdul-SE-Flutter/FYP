@@ -1,10 +1,10 @@
-const getProgramsList = require("../admin/admin").getPrograms;
-const getProgram = require("../admin/admin").getSingleProgram;
+const { getPrograms, getSingleProgram } = require("../utils/shared");
 const id_validator = require("../../controllers/utils/IdValidator");
 const Agent = require("../../models/agent");
-exports.getPrograms = getProgramsList;
 
-exports.getSingleProgram = getProgram;
+exports.getPrograms = getPrograms;
+
+exports.getSingleProgram = getSingleProgram;
 
 exports.hireExpert = async (req, res, next) => {
   try {
