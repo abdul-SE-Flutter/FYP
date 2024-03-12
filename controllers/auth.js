@@ -127,7 +127,9 @@ exports.updateUser = async (req, res, next) => {
       user.imageUrl = imageUrl;
       await user.save();
     }
-    res.status(200).json({ message: "User updated successfully" });
+    res
+      .status(200)
+      .json({ message: "User updated successfully", data: { ...user._doc } });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     if (req.file) {

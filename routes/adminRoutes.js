@@ -1,7 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
-const programController = require("../controllers/admin/admin");
-const adminController = require("../controllers/admin/adminUserController");
+const adminController = require("../controllers/admin/admin");
+const adminUserController = require("../controllers/admin/adminUserController");
 const router = express.Router();
 const multer = require("multer");
 const storage = require("../multer/useMulter").getStorage("images/posts");
@@ -19,21 +19,33 @@ function fileFilter(req, file, cb) {
 router.post(
   "/program",
   multer({ storage: storage, fileFilter: fileFilter }).single("programImg"),
-  programController.postProgram
+  adminController.postProgram
 );
-router.delete("/program/:programId", programController.deleteProgram);
+router.delete("/program/:programId", adminController.deleteProgram);
+
 router.put(
   "/program/:programId",
   multer({ storage: storage, fileFilter: fileFilter }).single("programImg"),
-  programController.updateProgram
+  adminController.updateProgram
 );
-router.get("/program/:programId", programController.getSingleProgram);
-router.get("/programs", programController.getPrograms);
+router.get("/program/:programId", adminController.getSingleProgram);
+router.get("/programs", adminController.getPrograms);
 
 // Admins prevelage over users can delete users can see users
-router.get("/getUsers", adminController.getUsers);
-router.delete("/user/:id", adminController.removeUser);
+router.get("/getUsers", adminUserController.getUsers);
+router.delete("/user/:id", adminUserController.removeUser);
 
+router.post(
+  "/signin",
+  [
+    body("email")
+      .isEmail()
+      .trim()
+      .escape()
+      .withMessage("email not valid or inncorrect"),
+  ],
+  adminController.signWithEmailAndPassword
+);
 module.exports = router;
 
 // [

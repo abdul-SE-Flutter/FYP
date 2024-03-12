@@ -5,10 +5,15 @@ const {
   MSStudentProgram,
   PhdStudentProgram,
 } = require("../../models/program");
-const fs = require("fs");
+
 const path = require("path");
 const programIDValidator = require("../utils/IdValidator");
-const { getPrograms, getSingleProgram, clearFile } = require("../utils/shared");
+const {
+  getPrograms,
+  getSingleProgram,
+  clearFile,
+  signWithEmailAndPassword,
+} = require("../utils/shared");
 const { validationResult } = require("express-validator");
 
 exports.getPrograms = getPrograms;
@@ -136,9 +141,10 @@ exports.deleteProgram = async (req, res, next) => {
           path.basename(program.imageUrl)
       );
     }
-    res
-      .status(200)
-      .json({ message: "program deleted", programId: program._id });
+    res.status(200).json({
+      message: "program deleted: program id is attached in data feild",
+      data: program._id,
+    });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     next(err);
@@ -168,9 +174,10 @@ exports.updateProgram = async (req, res, next) => {
       program.imageUrl = imageUrl;
     }
     await program.save();
-    res
-      .status(200)
-      .json({ message: "program updated", programId: program._id });
+    res.status(200).json({
+      message: "program updated=> program id is attached in data feild",
+      data: program._id,
+    });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     if (req.file) {
@@ -181,3 +188,5 @@ exports.updateProgram = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.signWithEmailAndPassword = signWithEmailAndPassword;

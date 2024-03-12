@@ -10,6 +10,7 @@ exports.getUsers = async (req, res, next) => {
       throw err;
     }
     res.status(200).json({
+      message: "All users listed in data feild",
       count: users.length,
       data: users,
     });
