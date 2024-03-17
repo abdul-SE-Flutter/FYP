@@ -51,11 +51,15 @@ const universityStudentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  currentCGPA: {
+  cgpa: {
     type: Number,
     required: true,
   },
   semester: {
+    type: Number,
+    required: true,
+  },
+  SSC_prcntg: {
     type: Number,
     required: true,
   },

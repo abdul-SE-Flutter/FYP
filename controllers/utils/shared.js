@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { Program } = require("../../models/program");
 const { User } = require("../../models/user");
+const mongoose = require("mongoose");
 const programIDValidator = require("./IdValidator");
 
 exports.getPrograms = async (req, res, next) => {
@@ -42,6 +43,7 @@ exports.getSingleProgram = async (req, res, next) => {
 exports.deleteAccount = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
+
     if (!user || !mongoose.Types.ObjectId.isValid(req.params.id)) {
       const error = new Error(
         `User with  id: [${req.params.id}] not found or id might be incorrect`
@@ -52,8 +54,9 @@ exports.deleteAccount = async (req, res, next) => {
 
     if (user.imageUrl) {
       const image = path.basename(user.imageUrl);
-      clearFile(
-        path.join(__dirname, "..", "images", "user_profile_pics/") + image
+
+      this.clearFile(
+        path.join(__dirname, "..", "..", "images", "user_profile_pics/") + image
       );
     }
 

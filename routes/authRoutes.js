@@ -1,6 +1,5 @@
 const express = require("express");
 const { check } = require("express-validator");
-
 const { User } = require("../models/user");
 const userController = require("../controllers/auth");
 const router = express.Router();
@@ -20,6 +19,7 @@ function fileFilter(req, file, cb) {
     cb(null, false);
   }
 }
+
 router.post(
   "/register",
   multer({ storage: storage, fileFilter: fileFilter }).single("user_image"),

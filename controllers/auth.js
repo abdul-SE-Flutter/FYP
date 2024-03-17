@@ -24,6 +24,8 @@ exports.signup = async (req, res, next) => {
       error.data = err;
       throw error;
     }
+    let cgpa;
+    let SSC_prcntg;
     const {
       username,
       age,
@@ -34,6 +36,12 @@ exports.signup = async (req, res, next) => {
       monthlyIcome,
       role,
     } = req.body;
+    const result = await require("../services/email").checkEmail(email);
+    if (!result) {
+      const err = new Error("Email not exists");
+      err.statusCode = 422;
+      throw err;
+    }
 
     const newUser = {
       username: username,
@@ -52,24 +60,26 @@ exports.signup = async (req, res, next) => {
     }
     switch (role) {
       case "CollegeStudent":
-        const SSC_prcntg = req.body.SSC_prcntg;
+        SSC_prcntg = req.body.SSC_prcntg;
         const collegeStudent = new CollegeStudent({ ...newUser, SSC_prcntg });
         await collegeStudent.save();
         break;
       case "UniversityStudent":
         const HSC_prcntg = req.body.HSC_prcntg;
-        const currentCGPA = req.body.currentCGPA;
+        SSC_prcntg = req.body.SSC_prcntg;
         const semester = req.body.semester;
+        cgpa = req.body.cgpa;
         const universityStudent = new UniversityStudent({
           ...newUser,
           HSC_prcntg,
-          currentCGPA,
           semester,
+          SSC_prcntg,
+          cgpa,
         });
         await universityStudent.save();
         break;
       case "PostGraduateStudent":
-        const cgpa = req.body.cgpa;
+        cgpa = req.body.cgpa;
         const isPHD = req.body.isPHD;
         const postGraduateStudent = new PostGraduateStudent({
           ...newUser,
@@ -82,6 +92,7 @@ exports.signup = async (req, res, next) => {
 
     res.status(200).json({
       message: `${role} posted to DB`,
+      success: true,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;

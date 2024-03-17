@@ -11,9 +11,12 @@ exports.sendMessage = async (req, res, next) => {
       });
       await newMessage.save();
       res.status(200).json({ message: "Message posted to DB" });
+      const socket = require("../../socket").getSocket();
+
       require("../../socket").getIO().emit("newMessage", {
         message: "Some message received",
         data: message,
+        socket: socket.id,
       });
     } else {
       res.status(409).json({
