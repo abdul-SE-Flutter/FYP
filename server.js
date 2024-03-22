@@ -27,9 +27,11 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/agent", agentRoutes);
 app.use("/chat", chatRoutes);
+
 app.use("/stripe/test", (req, res) => {
   res.send(`<h1>Payment Successfull<h1>`);
 });
+
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;

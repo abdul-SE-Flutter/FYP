@@ -70,9 +70,21 @@ const postGradeStudentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  isPHD: {
+  hasCompletedMS: {
     type: Boolean,
     required: true,
+  },
+  isEmployeeOfPublicSector: {
+    type: Boolean,
+    required: function () {
+      return this.hasCompletedMS === true;
+    },
+  },
+  hasFirstDivisionThroughtAcademicia: {
+    type: Boolean,
+    required: function () {
+      return this.hasCompletedMS === true;
+    },
   },
 });
 

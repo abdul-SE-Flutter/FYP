@@ -93,6 +93,13 @@ exports.signWithEmailAndPassword = async (req, res, next) => {
       error.data = err;
       throw error;
     }
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user._id.toString(),
+      },
+      "somesupersecretsecret"
+    );
     res.status(200).json(user._doc);
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;

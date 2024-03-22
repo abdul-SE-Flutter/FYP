@@ -5,20 +5,22 @@ const Schema = mongoose.Schema;
 const scholarshipProgramSchema = new Schema(
   {
     // Common fields
+    programLink: String,
     imageUrl: String,
+    lastDateToApply: String,
+    maxAge: Number,
+    maxIncomeLimit: Number,
+    amountOfScholarship: String,
+    durationOfProgram: String,
+
     targetedRegions: {
       type: [String],
       required: true,
     },
-    lastDateToApply: { type: String, required: true },
-    maxAge: { type: Number, required: true },
-    onlyForPublicUnis: Boolean,
-    maxIncomeLimit: Number,
-    amountOfScholarship: Number,
     minQualification: { type: String, required: true },
     description: { type: String, required: true },
     title: { type: String, required: true },
-    durationOfProgram: String,
+    category: { type: String, required: true },
   },
   {
     timestamps: true,
@@ -35,23 +37,40 @@ const collegeStudentProgramSchema = new Schema({
 
 // University student schema (assumed to be the same as college student for this example)
 const universityStudentProgramSchema = new Schema({
-  minCGPA: { type: Number, required: true },
-  minSHCPrcntg: { type: Number, required: true },
-  minSSCPrcntg: { type: Number },
+  onlyForPublicUnis: Boolean,
+  requiresUniversityRank: Boolean,
+  minSHCPrcntg: Number,
+  minSSCPrcntg: Number,
   minSemester: Number,
+  minCGPA: { type: Number, required: true },
+  targetedDisciplines: {
+    type: [String],
+    required: function () {
+      return this.category === "international";
+    },
+  },
+  mustHoldInternationalUniversityAcceptance: Boolean,
 });
 
 // MS student schema
 const msStudentProgramSchema = new Schema({
+  requiresFirstDivison: Boolean,
   minCGPA: { type: Number, required: true },
-  requiredEmployeeOfPublicSector: Boolean,
+  targetedDisciplines: {
+    type: [String],
+    required: function () {
+      return this.category === "international";
+    },
+  },
+  mustHoldInternationalUniversityAcceptance: Boolean,
+  requiresEmployeeOfPublicSector: Boolean,
 });
 
 // PhD student schema
 const phdStudentProgramSchema = new Schema({
   requiredEmployeeOfPublicSector: Boolean,
+  mustHoldInternationalUniversityAcceptance: Boolean,
   minCGPA: Number,
-  firstDivisionThroughtAcademicia: Boolean,
 });
 
 // Discriminator options
