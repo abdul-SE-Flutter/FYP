@@ -6,6 +6,7 @@ const {
   UniversityStudent,
   PostGraduateStudent,
 } = require("../models/user");
+const email_chekcer = require("../services/email");
 const {
   deleteAccount,
   clearFile,
@@ -26,8 +27,10 @@ exports.signup = async (req, res, next) => {
     }
     let cgpa;
     let SSC_prcntg;
+
     const {
       username,
+      hasFirstDivisionThroughtAcademicia,
       age,
       email,
       password,
@@ -36,7 +39,7 @@ exports.signup = async (req, res, next) => {
       monthlyIcome,
       role,
     } = req.body;
-    const result = await require("../services/email").checkEmail(email);
+    const result = await email_chekcer.checkEmail(email);
     if (!result) {
       const err = new Error("Email not exists");
       err.statusCode = 422;
@@ -51,6 +54,7 @@ exports.signup = async (req, res, next) => {
       province: province,
       hasOtherScholership: hasOtherScholership,
       monthlyIcome: monthlyIcome,
+      hasFirstDivisionThroughtAcademicia: hasFirstDivisionThroughtAcademicia,
       role: role,
     };
 
@@ -80,11 +84,13 @@ exports.signup = async (req, res, next) => {
         break;
       case "PostGraduateStudent":
         cgpa = req.body.cgpa;
-        const isPHD = req.body.isPHD;
+        const hasCompletedMS = req.body.hasCompletedMS;
+        const isEmployeeOfPublicSector = req.body.isEmployeeOfPublicSector;
         const postGraduateStudent = new PostGraduateStudent({
           ...newUser,
           cgpa,
-          isPHD,
+          hasCompletedMS,
+          isEmployeeOfPublicSector,
         });
         await postGraduateStudent.save();
         break;

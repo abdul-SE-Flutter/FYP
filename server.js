@@ -10,6 +10,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const agentRoutes = require("./routes/agetRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const eligibilityCheckerRoutes = require("./routes/eligibility-checker");
 
 //Atlas connection=> mongodb+srv://root:root@pakoppertunityhub.o7g7hv4.mongodb.net/?retryWrites=true&w=majority
 
@@ -27,6 +28,7 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/agent", agentRoutes);
 app.use("/chat", chatRoutes);
+app.use("/eligibilityChecher", eligibilityCheckerRoutes);
 
 app.use("/stripe/test", (req, res) => {
   res.send(`<h1>Payment Successfull<h1>`);
@@ -36,7 +38,8 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
   const data = error.data;
-  res.status(status).json({ message: message, data: data });
+
+  res.status(status).json({ message: message, data: data, success: false });
 });
 
 mongoose

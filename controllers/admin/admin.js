@@ -2,8 +2,7 @@ const {
   Program,
   CollegeStudentProgram,
   UniversityStudentProgram,
-  MSStudentProgram,
-  PhdStudentProgram,
+  PostGraduateStudentProgramSchema,
 } = require("../../models/program");
 
 const path = require("path");
@@ -30,23 +29,27 @@ exports.postProgram = async (req, res, next) => {
     }
 
     const {
+      programLink,
       targetedRegions,
       lastDateToApply,
       maxAge,
-      onlyForPublicUnis,
       maxIncomeLimit,
-      amountOfScholarship,
       minQualification,
       description,
       title,
+      category,
       durationOfProgram,
+      amountOfScholarship,
+      FAQs,
     } = req.body;
 
     const new_program = {
+      programLink: programLink,
+      category: category,
+      FAQs: FAQs,
       targetedRegions: targetedRegions,
       lastDateToApply: lastDateToApply,
       maxAge: maxAge,
-      onlyForPublicUnis: onlyForPublicUnis,
       maxIncomeLimit: maxIncomeLimit,
       amountOfScholarship: amountOfScholarship,
       minQualification: minQualification,
@@ -54,6 +57,10 @@ exports.postProgram = async (req, res, next) => {
       title: title,
       durationOfProgram: durationOfProgram,
     };
+    if (req.file) {
+      new_program.imageUrl =
+        "http://localhost:8080/images/posts/" + req.file.filename;
+    }
     let program;
     let programSchema;
     switch (minQualification) {
@@ -66,38 +73,59 @@ exports.postProgram = async (req, res, next) => {
         programSchema = collegeStudentProgram;
         break;
       case "UniversityStudentProgram":
-        const universityStudentProgram = new UniversityStudentProgram({
-          ...new_program,
-          minCGPA: req.body.minCGPA,
-          minSHCPrcntg: req.body.minSHCPrcntg,
-          minSSCPrcntg: req.body.minSSCPrcntg,
-          minSemester: req.body.minSemester,
-        });
+        let universityStudentProgram;
+        if (category === "international") {
+          universityStudentProgram = new UniversityStudentProgram({
+            ...new_program,
+            mustHoldInternationalUniversityAcceptance:
+              req.body.mustHoldInternationalUniversityAcceptance,
+            targetedDisciplines: req.body.targetedDisciplines,
+            minCGPA: req.body.minCGPA,
+            requiresFirstDivison: req.body.requiresFirstDivison,
+          });
+        } else {
+          universityStudentProgram = new UniversityStudentProgram({
+            ...new_program,
+            onlyForPublicUnis: req.body.onlyForPublicUnis,
+            minCGPA: req.body.minCGPA,
+            minSHCPrcntg: req.body.minSHCPrcntg,
+            minSSCPrcntg: req.body.minSSCPrcntg,
+            minSemester: req.body.minSemester,
+            requiresUniversityRank: req.body.requiresUniversityRank,
+            requiresFirstDivison: req.body.requiresFirstDivison,
+          });
+        }
 
         program = await universityStudentProgram.save();
         programSchema = universityStudentProgram;
         break;
-      case "MSStudentProgram":
-        const msStudentProgram = new MSStudentProgram({
-          ...new_program,
-          minCGPA: req.body.minCGPA,
-          requiredEmployeeOfPublicSector:
-            req.body.requiredEmployeeOfPublicSector,
-        });
-        program = await msStudentProgram.save();
-        programSchema = msStudentProgram;
-        break;
-      case "PhdStudentProgram":
-        const phdSyudentProgram = new PhdStudentProgram({
-          ...new_program,
-          requiredEmployeeOfPublicSector:
-            req.body.requiredEmployeeOfPublicSector,
-          minCGPA: req.body.minCGPA,
-          firstDivisionThroughtAcademicia:
-            req.body.firstDivisionThroughtAcademicia,
-        });
-        program = await phdSyudentProgram.save();
-        programSchema = phdSyudentProgram;
+      case "PostGraduateStudentProgram":
+        let postGraduateStudentProgram;
+        if (category === "international") {
+          postGraduateStudentProgram = new PostGraduateStudentProgramSchema({
+            ...new_program,
+            isPHD_program: req.body.isPHD_program,
+            requiresFirstDivison: req.body.requiresFirstDivison,
+            mustHoldInternationalUniversityAcceptance:
+              req.body.mustHoldInternationalUniversityAcceptance,
+            minCGPA: req.body.minCGPA,
+            requiresEmployeeOfPublicSector:
+              req.body.requiresEmployeeOfPublicSector,
+            targetedDisciplines: req.body.targetedDisciplines,
+          });
+        } else {
+          postGraduateStudentProgram = new PostGraduateStudentProgramSchema({
+            ...new_program,
+            isPHD_program: req.body.isPHD_program,
+            requiresFirstDivison: req.body.requiresFirstDivison,
+            minCGPA: req.body.minCGPA,
+            requiresEmployeeOfPublicSector:
+              req.body.requiresEmployeeOfPublicSector,
+          });
+        }
+
+        program = await postGraduateStudentProgram.save();
+        programSchema = postGraduateStudentProgram;
         break;
       default:
         const err = new Error(
@@ -114,6 +142,7 @@ exports.postProgram = async (req, res, next) => {
     res.status(201).json({
       message: `${minQualification} program posted to DB`,
       programId: program._id,
+      success: true,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
@@ -144,6 +173,7 @@ exports.deleteProgram = async (req, res, next) => {
     res.status(200).json({
       message: "program deleted: program id is attached in data feild",
       data: program._id,
+      success: true,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
@@ -177,6 +207,7 @@ exports.updateProgram = async (req, res, next) => {
     res.status(200).json({
       message: "program updated=> program id is attached in data feild",
       data: program._id,
+      success: true,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;

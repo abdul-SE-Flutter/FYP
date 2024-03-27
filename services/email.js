@@ -1,21 +1,16 @@
 const nodemailer = require("nodemailer");
-const email_existence = require("./test");
+const email_existence = require("email-existence");
 
 module.exports = {
   checkEmail: (email) => {
     return new Promise((resolve, reject) => {
-      email_existence.check(
-        email,
-        (error, response) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(response);
-          }
-        },
-        4000,
-        "20011598-076@uog.edu.pk"
-      );
+      email_existence.check(email, (error, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response);
+        }
+      });
     });
   },
 };

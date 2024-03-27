@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const scholarshipProgramSchema = new Schema(
   {
     // Common fields
+
     programLink: String,
     imageUrl: String,
     lastDateToApply: String,
@@ -21,6 +22,9 @@ const scholarshipProgramSchema = new Schema(
     description: { type: String, required: true },
     title: { type: String, required: true },
     category: { type: String, required: true },
+    FAQs: [{ qs: String, ans: String }],
+    eligibilityCriteria: [String],
+    termsAndConditions: [String],
   },
   {
     timestamps: true,
@@ -39,38 +43,26 @@ const collegeStudentProgramSchema = new Schema({
 const universityStudentProgramSchema = new Schema({
   onlyForPublicUnis: Boolean,
   requiresUniversityRank: Boolean,
+  requiresFirstDivison: Boolean,
   minSHCPrcntg: Number,
   minSSCPrcntg: Number,
-  minSemester: Number,
-  minCGPA: { type: Number, required: true },
-  targetedDisciplines: {
-    type: [String],
-    required: function () {
-      return this.category === "international";
-    },
-  },
+  maxSemester: Number,
+  minCGPA: Number,
+  targetedDisciplines: [String],
   mustHoldInternationalUniversityAcceptance: Boolean,
+  onlyForSpecificDisciplines: Boolean,
 });
 
-// MS student schema
-const msStudentProgramSchema = new Schema({
+// MS student schema and PhD student schema
+const postGraduateStudentProgramSchema = new Schema({
   requiresFirstDivison: Boolean,
   minCGPA: { type: Number, required: true },
-  targetedDisciplines: {
-    type: [String],
-    required: function () {
-      return this.category === "international";
-    },
-  },
+  targetedDisciplines: [String],
   mustHoldInternationalUniversityAcceptance: Boolean,
   requiresEmployeeOfPublicSector: Boolean,
-});
-
-// PhD student schema
-const phdStudentProgramSchema = new Schema({
-  requiredEmployeeOfPublicSector: Boolean,
-  mustHoldInternationalUniversityAcceptance: Boolean,
-  minCGPA: Number,
+  isPHD_program: Boolean,
+  onlyForSpecificDisciplines: Boolean,
+  onlyForPublicUnis: Boolean,
 });
 
 // Discriminator options
@@ -90,14 +82,9 @@ const UniversityStudentProgram = Program.discriminator(
   universityStudentProgramSchema,
   options
 );
-const MSStudentProgram = Program.discriminator(
-  "MSStudentProgram",
-  msStudentProgramSchema,
-  options
-);
-const PhdStudentProgram = Program.discriminator(
-  "PhdStudentProgram",
-  phdStudentProgramSchema,
+const PostGraduateStudentProgram = Program.discriminator(
+  "PostGraduateStudentProgram",
+  postGraduateStudentProgramSchema,
   options
 );
 
@@ -105,6 +92,5 @@ module.exports = {
   Program,
   CollegeStudentProgram,
   UniversityStudentProgram,
-  MSStudentProgram,
-  PhdStudentProgram,
+  PostGraduateStudentProgram,
 };

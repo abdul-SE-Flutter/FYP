@@ -35,6 +35,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    hasFirstDivisionThroughtAcademicia: Boolean,
   },
   { timestamps: true }
 );
@@ -74,18 +75,7 @@ const postGradeStudentSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  isEmployeeOfPublicSector: {
-    type: Boolean,
-    required: function () {
-      return this.hasCompletedMS === true;
-    },
-  },
-  hasFirstDivisionThroughtAcademicia: {
-    type: Boolean,
-    required: function () {
-      return this.hasCompletedMS === true;
-    },
-  },
+  isEmployeeOfPublicSector: Boolean,
 });
 
 const discriminator = "role";
