@@ -178,7 +178,6 @@ exports.checkEligibility = async (req, res, next) => {
 
       case "PostGraduateStudent":
         query = {
-          isPHD_program: true,
           minCGPA: { $lte: userCGPA },
           maxAge: { $gte: userAge },
           $and: [
@@ -192,6 +191,12 @@ exports.checkEligibility = async (req, res, next) => {
                     $eq: req.body.hasAdmissionLetter,
                   },
                 },
+              ],
+            },
+            {
+              $or: [
+                { requiresFirstDivison: { $exists: false } },
+                { requiresFirstDivison: { $eq: division } },
               ],
             },
             {
@@ -219,19 +224,15 @@ exports.checkEligibility = async (req, res, next) => {
         if (hasCompletedMS) {
           allPrograms = await PostGraduateStudentProgram.find({
             isPHD_program: true,
-          }).select(
-            "-_id -__t category targetedRegions requiresEmployeeOfPublicSector mustHoldInternationalUniversityAcceptance maxAge minCGPA"
-          );
-
-          // query.isPHD_program = true;
-
-          partialyMatchingPrograms = await PostGraduateStudentProgram.find(
-            query
-          ).select(
-            "-_id -__t category targetedRegions requiresEmployeeOfPublicSector mustHoldInternationalUniversityAcceptance maxAge minCGPA"
-          );
-          matchedPrograms = [];
+          });
+          matchedPrograms = await PostGraduateStudentProgram.find(query);
+          partialyMatchingPrograms = [];
         } else {
+          allPrograms = await PostGraduateStudentProgram.find({
+            isPHD_program: false,
+          });
+          matchedPrograms = await PostGraduateStudentProgram.find(query);
+          partialyMatchingPrograms = [];
         }
         break;
     }

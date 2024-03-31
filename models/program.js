@@ -36,7 +36,7 @@ const discriminatorKey = "minQualification";
 
 // College student schema
 const collegeStudentProgramSchema = new Schema({
-  minSHCPrcntg: Number,
+  minSSCPrcntg: Number,
 });
 
 // University student schema (assumed to be the same as college student for this example)
@@ -49,7 +49,7 @@ const universityStudentProgramSchema = new Schema({
   maxSemester: Number,
   minCGPA: Number,
   targetedDisciplines: [String],
-  mustHoldInternationalUniversityAcceptance: Boolean,
+  requiresInternationalUniversityAcceptance: Boolean,
   onlyForSpecificDisciplines: Boolean,
 });
 
