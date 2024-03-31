@@ -46,7 +46,7 @@ mongoose
   .connect(MONGODB_URL)
   .then((result) => {
     console.log("App is listening at port : 8080");
-    console.log("Database is connected");
+    console.log("Database is connected...");
     const server = app.listen(8080);
     require("./socket").init(server);
   })
