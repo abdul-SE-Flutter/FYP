@@ -36,15 +36,15 @@ exports.signup = async (req, res, next) => {
       password,
       province,
       hasOtherScholership,
-      monthlyIcome,
+      monthlyIncome,
       role,
     } = req.body;
-    const result = await email_chekcer.checkEmail(email);
-    if (!result) {
-      const err = new Error("Email not exists");
-      err.statusCode = 422;
-      throw err;
-    }
+    // const result = await email_chekcer.checkEmail(email);
+    // if (!result) {
+    //   const err = new Error("Email not exists");
+    //   err.statusCode = 422;
+    //   throw err;
+    // }
 
     const newUser = {
       username: username,
@@ -53,7 +53,7 @@ exports.signup = async (req, res, next) => {
       password: password,
       province: province,
       hasOtherScholership: hasOtherScholership,
-      monthlyIcome: monthlyIcome,
+      monthlyIncome: monthlyIncome,
       hasFirstDivisionThroughtAcademicia: hasFirstDivisionThroughtAcademicia,
       role: role,
     };

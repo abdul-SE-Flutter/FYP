@@ -2,7 +2,7 @@ const {
   Program,
   CollegeStudentProgram,
   UniversityStudentProgram,
-  PostGraduateStudentProgramSchema,
+  PostGraduateStudentProgram,
 } = require("../../models/program");
 
 const path = require("path");
@@ -102,7 +102,7 @@ exports.postProgram = async (req, res, next) => {
       case "PostGraduateStudentProgram":
         let postGraduateStudentProgram;
         if (category === "international") {
-          postGraduateStudentProgram = new PostGraduateStudentProgramSchema({
+          postGraduateStudentProgram = new PostGraduateStudentProgram({
             ...new_program,
             isPHD_program: req.body.isPHD_program,
             requiresFirstDivison: req.body.requiresFirstDivison,
@@ -114,7 +114,7 @@ exports.postProgram = async (req, res, next) => {
             targetedDisciplines: req.body.targetedDisciplines,
           });
         } else {
-          postGraduateStudentProgram = new PostGraduateStudentProgramSchema({
+          postGraduateStudentProgram = new PostGraduateStudentProgram({
             ...new_program,
             isPHD_program: req.body.isPHD_program,
             requiresFirstDivison: req.body.requiresFirstDivison,

@@ -27,7 +27,7 @@ const userSchema = new Schema(
       type: Boolean,
       required: true,
     },
-    monthlyIcome: {
+    monthlyIncome: {
       type: Number,
       required: true,
     },
