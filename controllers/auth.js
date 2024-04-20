@@ -35,7 +35,7 @@ exports.signup = async (req, res, next) => {
       email,
       password,
       province,
-      hasOtherScholership,
+      hasOtherScholarship,
       monthlyIncome,
       role,
     } = req.body;
@@ -52,7 +52,7 @@ exports.signup = async (req, res, next) => {
       email: email,
       password: password,
       province: province,
-      hasOtherScholership: hasOtherScholership,
+      hasOtherScholarship: hasOtherScholarship,
       monthlyIncome: monthlyIncome,
       hasFirstDivisionThroughtAcademicia: hasFirstDivisionThroughtAcademicia,
       role: role,

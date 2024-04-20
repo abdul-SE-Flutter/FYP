@@ -98,9 +98,15 @@ exports.signWithEmailAndPassword = async (req, res, next) => {
         email: user.email,
         userId: user._id.toString(),
       },
-      "somesupersecretsecret"
+      "somesupersecretsecret",
+      { expiresIn: "1h" }
     );
-    res.status(200).json(user._doc);
+    res.status(200).json({
+      user: user._doc,
+      token: token,
+      success: true,
+      userId: user._id.toString(),
+    });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     next(err);

@@ -23,7 +23,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    hasOtherScholership: {
+    hasOtherScholarship: {
       type: Boolean,
       required: true,
     },

@@ -27,12 +27,15 @@ module.exports = {
         io.to(user.socketId).emit("getMessage", data.message);
       });
 
+      socketIO.on("postProgram", (data) => {
+        socketIO.emit("getProgramNotification", data);
+      });
+
       socketIO.on("disconnect", function () {
         console.log("User disconnected:", socketIO.id); // Access socket.id directly
         users = users.filter((user) => user.socketId != socketIO.id);
       });
     });
-
     return io;
   },
   getIO: () => {
