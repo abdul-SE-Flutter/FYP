@@ -51,4 +51,6 @@ router.put(
 
 router.delete("/delete/:id", userController.deleteAccount);
 
+router.post("/create-aik-admin-or-user" , userController.createAdmin);
+
 module.exports = router;

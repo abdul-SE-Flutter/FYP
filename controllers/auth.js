@@ -39,6 +39,11 @@ exports.signup = async (req, res, next) => {
       monthlyIncome,
       role,
     } = req.body;
+
+    if(role==="Admin"){
+      return res.status(400).json({message : "Admin cannot register with this api" });
+    }
+
     // const result = await email_chekcer.checkEmail(email);
     // if (!result) {
     //   const err = new Error("Email not exists");
@@ -59,7 +64,7 @@ exports.signup = async (req, res, next) => {
     };
 
     if (req.file) {
-      console.log("Uploaded image is : ", file);
+      console.log("Uploaded image is : ", req.file);
       newUser.imageUrl =
         "http://localhost:8080/images/user_profile_pics/" + req.file.filename;
     }
@@ -162,4 +167,15 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
+exports.createAdmin=async(req ,res)=>{
+    const {username,email,password , role}=req.body;
+    try {
+      
+
+    const user = await new User({username,email,password,role:role}).save();
+    res.status(200).json({message: role + " created successfully",data:{...user._doc}});
+  } catch (error) {
+      return res.status(500).json({message : error.message});   
+  }
+}
 exports.deleteAccount = deleteAccount;

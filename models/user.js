@@ -5,11 +5,16 @@ const userSchema = new Schema(
     imageUrl: String,
     username: {
       type: String,
-      required: true,
+      required: function(){
+        return this.role !== "Admin" && this.role !== "Agent"
+      },
+
     },
     age: {
       type: Number,
-      required: true,
+      required: function(){
+        return this.role !== "Admin"  && this.role !== "Agent"
+      },
     },
     email: {
       type: String,
@@ -21,19 +26,26 @@ const userSchema = new Schema(
     },
     province: {
       type: String,
-      required: true,
+      required: function(){
+        return this.role !== "Admin"  && this.role !== "Agent"
+      },
     },
     hasOtherScholarship: {
       type: Boolean,
-      required: true,
+      required: function(){
+        return this.role !== "Admin"  && this.role !== "Agent"
+      },
     },
     monthlyIncome: {
       type: Number,
-      required: true,
+      required: function(){
+        return this.role !== "Admin"  && this.role !== "Agent"
+      },
     },
     role: {
       type: String,
       required: true,
+      enum : ['CollegeStudent', 'UniversityStudent', 'PostGraduateStudent' , 'Admin' , 'Agent']
     },
     hasHiredEpert: String,
     hasFirstDivisionThroughtAcademicia: Boolean,

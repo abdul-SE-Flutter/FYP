@@ -1,19 +1,12 @@
+
 const express = require("express");
-const conversationController = require("../controllers/chat/Conversation");
-const mesagesController = require("../controllers/chat/message");
+const  authMW  = require("../jwt/isAuth");
+const { getChatBetweenTwo, sendMessage, getAllChats } = require("../controllers/chat");
 const router = express.Router();
 
-router.post("/add/conversation", conversationController.addConversation);
-router.get(
-  "/get/conversation/:userId",
-  conversationController.getSingleConversation
-);
-router.get(
-  "/get/conversation/:userId",
-  conversationController.getSingleConversation
-);
-router.get("/conversations", conversationController.getConversations);
-router.post("/send/message", mesagesController.sendMessage);
-router.get("/get/messages/:conversationId", mesagesController.getMessages);
+router.post("/message/send" , authMW ,sendMessage);
+router.get("/:senderId/:receiverId" , authMW , getChatBetweenTwo);
+router.get("/convos/all/:userId" , authMW  , getAllChats);
+
 
 module.exports = router;
