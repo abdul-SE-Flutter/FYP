@@ -17,28 +17,29 @@ const path = require("path");
 const { validationResult } = require("express-validator");
 
 exports.signup = async (req, res, next) => {
-  const err = validationResult(req);
+  console.log(req.file);
+  // const err = validationResult(req);
   try {
-    if (!err.isEmpty()) {
-      const error = new Error(err.array()[0].msg);
-      error.statusCode = 422;
-      error.data = err;
-      throw error;
-    }
-    let cgpa;
-    let SSC_prcntg;
+    //   if (!err.isEmpty()) {
+    //     const error = new Error(err.array()[0].msg);
+    //     error.statusCode = 422;
+    //     error.data = err;
+    //     throw error;
+    //   }
+    //   let cgpa;
+    //   let SSC_prcntg;
 
-    const {
-      username,
-      hasFirstDivisionThroughtAcademicia,
-      age,
-      email,
-      password,
-      province,
-      hasOtherScholarship,
-      monthlyIncome,
-      role,
-    } = req.body;
+    //   const {
+    //     username,
+    //     hasFirstDivisionThroughtAcademicia,
+    //     age,
+    //     email,
+    //     password,
+    //     province,
+    //     hasOtherScholarship,
+    //     monthlyIncome,
+    //     role,
+    //   } = req.body;
     // const result = await email_chekcer.checkEmail(email);
     // if (!result) {
     //   const err = new Error("Email not exists");
@@ -46,68 +47,81 @@ exports.signup = async (req, res, next) => {
     //   throw err;
     // }
 
-    const newUser = {
-      username: username,
-      age: age,
-      email: email,
-      password: password,
-      province: province,
-      hasOtherScholarship: hasOtherScholarship,
-      monthlyIncome: monthlyIncome,
-      hasFirstDivisionThroughtAcademicia: hasFirstDivisionThroughtAcademicia,
-      role: role,
-    };
+    // const newUser = {
+    //   username: username,
+    //   age: age,
+    //   email: email,
+    //   password: password,
+    //   province: province,
+    //   hasOtherScholarship: hasOtherScholarship,
+    //   monthlyIncome: monthlyIncome,
+    //   hasFirstDivisionThroughtAcademicia: hasFirstDivisionThroughtAcademicia,
+    //   role: role,
+    // };
 
     if (req.file) {
+      console.log(
+        "Uploaded image is : ",
+        req.file,
+        " and body is : ",
+        req.body
+      );
       newUser.imageUrl =
         "http://localhost:8080/images/user_profile_pics/" + req.file.filename;
     }
-    switch (role) {
-      case "CollegeStudent":
-        SSC_prcntg = req.body.SSC_prcntg;
-        const collegeStudent = new CollegeStudent({ ...newUser, SSC_prcntg });
-        await collegeStudent.save();
-        break;
-      case "UniversityStudent":
-        const HSC_prcntg = req.body.HSC_prcntg;
-        SSC_prcntg = req.body.SSC_prcntg;
-        const semester = req.body.semester;
-        cgpa = req.body.cgpa;
-        const universityStudent = new UniversityStudent({
-          ...newUser,
-          HSC_prcntg,
-          semester,
-          SSC_prcntg,
-          cgpa,
-        });
-        await universityStudent.save();
-        break;
-      case "PostGraduateStudent":
-        cgpa = req.body.cgpa;
-        const hasCompletedMS = req.body.hasCompletedMS;
-        const isEmployeeOfPublicSector = req.body.isEmployeeOfPublicSector;
-        const postGraduateStudent = new PostGraduateStudent({
-          ...newUser,
-          cgpa,
-          hasCompletedMS,
-          isEmployeeOfPublicSector,
-        });
-        await postGraduateStudent.save();
-        break;
-    }
+
+    // console.log(
+    //   "Image in binary not loaded : ",
+    //   req.file,
+    //   " and body is : ",
+    //   req.body
+    // );
+    // switch (role) {
+    //   case "CollegeStudent":
+    //     SSC_prcntg = req.body.SSC_prcntg;
+    //     const collegeStudent = new CollegeStudent({ ...newUser, SSC_prcntg });
+    //     await collegeStudent.save();
+    //     break;
+    //   case "UniversityStudent":
+    //     const HSC_prcntg = req.body.HSC_prcntg;
+    //     SSC_prcntg = req.body.SSC_prcntg;
+    //     const semester = req.body.semester;
+    //     cgpa = req.body.cgpa;
+    //     const universityStudent = new UniversityStudent({
+    //       ...newUser,
+    //       HSC_prcntg,
+    //       semester,
+    //       SSC_prcntg,
+    //       cgpa,
+    //     });
+    //     await universityStudent.save();
+    //     break;
+    //   case "PostGraduateStudent":
+    //     cgpa = req.body.cgpa;
+    //     const hasCompletedMS = req.body.hasCompletedMS;
+    //     const isEmployeeOfPublicSector = req.body.isEmployeeOfPublicSector;
+    //     const postGraduateStudent = new PostGraduateStudent({
+    //       ...newUser,
+    //       cgpa,
+    //       hasCompletedMS,
+    //       isEmployeeOfPublicSector,
+    //     });
+    //     await postGraduateStudent.save();
+    //     break;
+    // }
 
     res.status(200).json({
-      message: `${role} posted to DB`,
+      message: `posted to DB`,
       success: true,
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
-    if (req.file) {
-      clearFile(
-        path.join(__dirname, "..", "images", "user_profile_pics/") +
-          req.file.filename
-      );
-    }
+    // if (req.file) {
+    //   clearFile(
+    //     path.join(__dirname, "..", "images", "user_profile_pics/") +
+    //       req.file.filename
+    //   );
+    // }
     next(err);
   }
 };

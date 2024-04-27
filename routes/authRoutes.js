@@ -23,16 +23,16 @@ function fileFilter(req, file, cb) {
 router.post(
   "/register",
   multer({ storage: storage, fileFilter: fileFilter }).single("user_image"),
-  check("email", "Invalid Email address")
-    .isEmail()
-    .escape()
-    .custom(async (value) => {
-      const user = await User.findOne({ email: value });
-      if (user) {
-        throw new Error("Email already exists");
-      }
-      return value;
-    }),
+  // check("email", "Invalid Email address")
+  //   .isEmail()
+  //   .escape()
+  //   .custom(async (value) => {
+  //     const user = await User.findOne({ email: value });
+  //     if (user) {
+  //       throw new Error("Email already exists");
+  //     }
+  //     return value;
+  //   }),
 
   userController.signup
 );
