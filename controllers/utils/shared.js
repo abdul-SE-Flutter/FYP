@@ -4,7 +4,8 @@ const { Program } = require("../../models/program");
 const { User } = require("../../models/user");
 const mongoose = require("mongoose");
 const programIDValidator = require("./IdValidator");
-
+const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 exports.getPrograms = async (req, res, next) => {
   try {
     const programs = await Program.find();
