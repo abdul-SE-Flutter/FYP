@@ -37,7 +37,7 @@ router.get("/getUsers", adminUserController.getUsers);
 router.delete("/user/:id", adminUserController.removeUser);
 
 router.post(
-  "/signin",
+  "/singin",
   [
     body("email")
       .isEmail()
