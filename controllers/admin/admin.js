@@ -5,6 +5,8 @@ const {
   PostGraduateStudentProgram,
 } = require("../../models/program");
 
+const Noti = require("../../models/notification");
+
 const path = require("path");
 const programIDValidator = require("../utils/IdValidator");
 const {
@@ -139,6 +141,8 @@ exports.postProgram = async (req, res, next) => {
         "http://localhost:8080/images/posts/" + req.file.filename;
       await programSchema.save();
     }
+
+     const noti = await new Noti({related_program : program._id , regions : targetedRegions}).save();
     res.status(201).json({
       message: `${minQualification} program posted to DB`,
       programId: program._id,
