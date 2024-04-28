@@ -6,6 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const socketio = require("socket.io");
 const http = require("http");
+const morgan = require("morgan");
 
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -21,6 +22,7 @@ const { socketConnection } = require("./services/new-socket-io");
 const MONGODB_URL = "mongodb+srv://root:root@pakoppertunityhub.o7g7hv4.mongodb.net/?retryWrites=true&w=majority";
 
 const app = express();
+app.use(morgan("dev"));
 
 const serverInstance = http.createServer(app);
 
