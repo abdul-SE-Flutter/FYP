@@ -111,3 +111,22 @@ exports.signWithEmailAndPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getPopularProgramsByReviews=async(req , res)=>{
+   try {
+        const programs = await Program.find({}).sort({noOfReviews : "desc"}).limit(3);
+        res.status(200).json({programs: programs});
+   } catch (error) {
+        return res.status(500).json({message: error.message});
+   }
+
+}
+
+exports.getLatestPrograms=async(req ,res)=>{
+  try {
+    const programs = await Program.find({}).sort({createdAt : "desc"}).limit(3);
+    res.status(200).json({programs: programs});
+} catch (error) {
+    return res.status(500).json({message: error.message});
+}
+};

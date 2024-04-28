@@ -23,6 +23,8 @@ const giveReview=async(req ,res)=>{
 
            const review = new review_model({rating, description , creator : userId, program : programId });
            review.save();
+           program.noOfReviews = program.noOfReviews + 1;
+           await program.save();
            return res.status(201).json({message : "Review added successfully"});
 
 

@@ -25,6 +25,7 @@ const scholarshipProgramSchema = new Schema(
     FAQs: [{ qs: String, ans: String }],
     eligibilityCriteria: [String],
     termsAndConditions: [String],
+    noOfReviews : {type: Number , default: 0}
   },
   {
     timestamps: true,
