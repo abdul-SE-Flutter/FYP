@@ -43,6 +43,11 @@ exports.signup = async (req, res, next) => {
     if(role==="Admin"){
       return res.status(400).json({message : "Admin cannot register with this api" });
     }
+    
+    const userExists = await User.findOne({email : email});
+    if (userExists) {
+      return res.status(400).json({message : "User already exists"});
+    }
 
     // const result = await email_chekcer.checkEmail(email);
     // if (!result) {

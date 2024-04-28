@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const programIDValidator = require("./IdValidator");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+
 exports.getPrograms = async (req, res, next) => {
   try {
     const programs = await Program.find();
@@ -81,17 +82,15 @@ exports.signWithEmailAndPassword = async (req, res, next) => {
   const err = validationResult(req);
   try {
     if (!err.isEmpty()) {
-      const error = new Error(err.array()[0]?.msg);
-      error.statusCode = 422;
-      error.data = err;
-      throw error;
+         return res.status(400).json({ message: err.array()[0].msg})
     }
-    const user = await User.findOne({ email: email, password: password });
+    const user = await User.findOne({ email: email });
     if (!user) {
-      const error = new Error("Email or password could not matched...");
-      error.statusCode = 422;
-      error.data = err;
-      throw error;
+      return res.status(400).json({message : "No user exists with this email"});
+    }
+
+    if(user.password!==password){
+      return res.status(400).json({message : "Incorrect password"});
     }
     const token = jwt.sign(
       {
