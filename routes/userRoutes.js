@@ -8,6 +8,7 @@ router.get("/programs", userController.getPrograms);
 router.get("/program/:programId", userController.getSingleProgram);
 router.post("/hireExpert", isAuth, userController.hireExpert);
 router.get("/get-experts", userController.getAppExpert);
+router.get("/get-expert/:id", userController.getExpertById);
 
 router.get("/popular-programs" , getPopularProgramsByReviews );
 router.get("/latest-programs" , getLatestPrograms );

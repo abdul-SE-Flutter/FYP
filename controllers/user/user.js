@@ -52,7 +52,8 @@ exports.hireExpert = async (req, res, next) => {
 
     const newChatBox =  new ChatBox({
         sender : userId,
-        receiver : expertId
+        receiver : expertId ,
+        latest_message : user.username + " has hired " + expert.username
     });
 
     await newChatBox.save();
@@ -70,6 +71,18 @@ exports.getAppExpert=async(req , res)=>{
   try {
         const experts = await User.find({role:"Agent"});
         return res.status(200).json({experts});
+  } catch (error) {
+    return res.status(500).json({message: error.message});
+  }
+}
+
+exports.getExpertById=async(req ,res)=>{
+  try {
+    const expert = await User.findById(req.params.id);
+    if(!expert){
+      return res.status(400).json({message : "No such expert exists"});
+    }
+    return res.status(200).json({expert});
   } catch (error) {
     return res.status(500).json({message: error.message});
   }

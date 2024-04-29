@@ -43,6 +43,8 @@ exports.postProgram = async (req, res, next) => {
       durationOfProgram,
       amountOfScholarship,
       FAQs,
+      eligibilityCriteria,
+      termsAndConditions
     } = req.body;
 
     const new_program = {
