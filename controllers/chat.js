@@ -13,7 +13,7 @@ const sendMessage = async (req, res, next) => {
     return res.status(400).json({message : errors.array()[0].msg});
   }
 
-  if (req.extractedUserId !== senderId) {
+  if (req.userId !== senderId) {
     return res.status(403).json({message : "Unauthorized user access"});
   }
 
@@ -21,7 +21,7 @@ const sendMessage = async (req, res, next) => {
     
 
   let user;
-           user = await user_model.findById(req.extractedUserId);
+           user = await user_model.findById(req.userId);
 
   
   if(!user)
@@ -89,7 +89,7 @@ else
 };
 
 const getChatBetweenTwo = async (req, res, next) => {
-  const userId = req.extractedUserId;
+  const userId = req.userId;
   const { senderId, receiverId } = req.params;
 
   if(userId!==senderId)
@@ -135,7 +135,7 @@ const getAllChats = async (req, res, next) => {
     
   let user;
 
-  if (userId !== req.extractedUserId) {
+  if (userId !== req.userId) {
    return res.status(403).json({message : "Unauthorized user access"})
   }
   
@@ -152,8 +152,8 @@ const getAllChats = async (req, res, next) => {
       //
       //
       $or: [{ sender: userId }, { receiver: userId }],
-    }).populate({path :"sender" , select :"username profile_pic"}).
-    populate({path :"receiver" , select :"username profile_pic"}).sort({updatedAt : -1});
+    }).populate({path :"sender" , select :"username imageUrl"}).
+    populate({path :"receiver" , select :"username imageUrl"}).sort({updatedAt : -1});
   } catch (err) {
      return res.status(500).json({message: err.message});
   }
