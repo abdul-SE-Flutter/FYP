@@ -66,7 +66,7 @@ mongoose
   .then((result) => {
     console.log("App is listening at port : 8080");
     console.log("Database is connected...");
-    const server = app.listen(8080);
+    const server = serverInstance.listen(8080);
   })
   .catch((e) => {
     console.log(e);
