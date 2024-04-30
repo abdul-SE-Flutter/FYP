@@ -7,58 +7,53 @@ const {
 } = require("../../models/program");
 exports.checkEligibility = async (req, res, next) => {
   try {
-    const userRole = req.body.user.role;
 
     const category = req.body.category;
 
-    const {
-      province: userRegion,
-      age: userAge,
-      monthlyIcome: userIncome,
-      SSC_prcntg: userSSC_prcntg,
-      SHC_prcntg: userSHC_prcntg,
-      cgpa: userCGPA,
-      hasFirstDivisionThroughtAcademicia: division,
-      semester: currentSemester,
-      hasCompletedMS,
-      isEmployeeOfPublicSector,
-    } = req.body.user;
+
+
+    const userExists = await User.findById(req.userId);
+    if (!userExists) {
+        return res.status(400).json({message : "No such user exists."});
+    }
+
+
 
     let allPrograms, partialyMatchingPrograms, matchedPrograms, query;
-    switch (userRole) {
+    switch (userExists.role) {
       case "CollegeStudent":
         allPrograms = await CollegeStudentProgram.find({});
         partialyMatchingPrograms = await CollegeStudentProgram.find({
           category: category,
           $or: [
-            { targetedRegions: userRegion },
+            { targetedRegions: userExists.province },
             { targetedRegions: "Pakistan" },
           ],
-          maxAge: { $lte: userAge },
+          maxAge: { $lte: userExists.age },
         });
         matchedPrograms = await CollegeStudentProgram.find({
           category: programType,
           $or: [
-            { targetedRegions: userRegion },
+            { targetedRegions: userExists.province },
             { targetedRegions: "Pakistan" },
           ],
           $and: [
             {
               $or: [
                 { maxAge: { $exists: false } },
-                { maxAge: { $gte: userAge } },
+                { maxAge: { $gte: userExists.age } },
               ],
             },
             {
               $or: [
                 { minSSCPrcntg: { $exists: false } },
-                { minSSCPrcntg: { $lte: userSSC_prcntg } },
+                { minSSCPrcntg: { $lte: userExists.SSC_prcntg } },
               ],
             },
             {
               $or: [
                 { maxIncomeLimit: { $exists: false } },
-                { maxIncomeLimit: { $gte: userIncome } },
+                { maxIncomeLimit: { $gte: userExists.monthlyIncome } },
               ],
             },
           ],
@@ -66,7 +61,7 @@ exports.checkEligibility = async (req, res, next) => {
         break;
 
       case "UniversityStudent":
-        if (userCGPA === 0) {
+        if (userExists.cgpa === 0) {
           allPrograms = await UniversityStudentProgram.find({
             minCGPA: { $exists: false },
           }).select("_id -__t");
@@ -75,25 +70,25 @@ exports.checkEligibility = async (req, res, next) => {
             minCGPA: { $exists: false },
             $or: [
               { maxAge: { $exists: false } },
-              { maxAge: { $gte: userAge } },
+              { maxAge: { $gte: userExists.age } },
             ],
             $and: [
               {
                 $or: [
                   { minSSCPrcntg: { $exists: false } },
-                  { minSSCPrcntg: { $lte: userSSC_prcntg } },
+                  { minSSCPrcntg: { $lte: userExists.SSC_prcntg } },
                 ],
               },
               {
                 $or: [
                   { minSHCPrcntg: { $exists: false } },
-                  { minSHCPrcntg: { $lte: userSHC_prcntg } },
+                  { minSHCPrcntg: { $lte: userExists.HSC_prcntg } },
                 ],
               },
               {
                 $or: [
                   { requiresFirstDivison: { $exists: false } },
-                  { requiresFirstDivison: { $eq: division } },
+                  { requiresFirstDivison: { $eq: userExists.hasFirstDivisionThroughtAcademicia } },
                 ],
               },
             ],
@@ -106,14 +101,14 @@ exports.checkEligibility = async (req, res, next) => {
           query.$and = [
             {
               $or: [
-                { targetedRegions: userRegion },
+                { targetedRegions: userExists.province },
                 { targetedRegions: "Pakistan" },
               ],
             },
             {
               $or: [
                 { maxIncomeLimit: { $exists: false } },
-                { maxIncomeLimit: { $gte: userIncome } },
+                { maxIncomeLimit: { $gte: userExists.monthlyIncome } },
               ],
             },
           ];
@@ -125,29 +120,29 @@ exports.checkEligibility = async (req, res, next) => {
           query = {
             $or: [
               { maxAge: { $exists: false } },
-              { maxAge: { $gte: userAge } },
+              { maxAge: { $gte: userExists.age } },
             ],
             $and: [
               {
                 $or: [
                   { minSSCPrcntg: { $exists: false } },
-                  { minSSCPrcntg: { $lte: userSSC_prcntg } },
+                  { minSSCPrcntg: { $lte: userExists.SSC_prcntg } },
                 ],
               },
               {
                 $or: [
                   { minSHCPrcntg: { $exists: false } },
-                  { minSHCPrcntg: { $lte: userSHC_prcntg } },
+                  { minSHCPrcntg: { $lte: userExists.HSC_prcntg } },
                 ],
               },
               {
                 $or: [
                   { requiresFirstDivison: { $exists: false } },
-                  { requiresFirstDivison: { $eq: division } },
+                  { requiresFirstDivison: { $eq:  userExists.hasFirstDivisionThroughtAcademicia } },
                 ],
               },
             ],
-            minCGPA: { $lte: userCGPA },
+            minCGPA: { $lte: userExists.cgpa  },
             category: category,
           };
           partialyMatchingPrograms = await UniversityStudentProgram.find(query);
@@ -156,7 +151,7 @@ exports.checkEligibility = async (req, res, next) => {
             {
               $or: [
                 { maxIncomeLimit: { $exists: false } },
-                { maxIncomeLimit: { $gte: userIncome } },
+                { maxIncomeLimit: { $gte: userExists.monthlyIncome } },
               ],
             },
             {
@@ -178,8 +173,8 @@ exports.checkEligibility = async (req, res, next) => {
 
       case "PostGraduateStudent":
         query = {
-          minCGPA: { $lte: userCGPA },
-          maxAge: { $gte: userAge },
+          minCGPA: { $lte: userExists.cgpa  },
+          maxAge: { $gte: userExists.age },
           $and: [
             {
               $or: [
@@ -196,7 +191,7 @@ exports.checkEligibility = async (req, res, next) => {
             {
               $or: [
                 { requiresFirstDivison: { $exists: false } },
-                { requiresFirstDivison: { $eq: division } },
+                { requiresFirstDivison: { $eq:  userExists.hasFirstDivisionThroughtAcademicia } },
               ],
             },
             {
@@ -206,14 +201,14 @@ exports.checkEligibility = async (req, res, next) => {
                 },
                 {
                   requiresEmployeeOfPublicSector: {
-                    $eq: isEmployeeOfPublicSector,
+                    $eq: userExists.isEmployeeOfPublicSector,
                   },
                 },
               ],
             },
             {
               $or: [
-                { targetedRegions: userRegion },
+                { targetedRegions: userExists.province },
                 { targetedRegions: "Pakistan" },
               ],
             },
@@ -221,7 +216,7 @@ exports.checkEligibility = async (req, res, next) => {
           category: category,
         };
 
-        if (hasCompletedMS) {
+        if (userExists.hasCompletedMS) {
           allPrograms = await PostGraduateStudentProgram.find({
             isPHD_program: true,
           });
