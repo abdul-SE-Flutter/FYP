@@ -56,6 +56,13 @@ const socketConnection=(io)=>{
             // data[0]._id = Math.random();
             // io.emit("recieve-msg", data);
           });
+
+          socket.on("send-noti" , async(regions)=>{
+               
+              io.emit("receive-noti" ,  regions);
+
+            
+          })
   
         
           socket.on("remove-user", () => {

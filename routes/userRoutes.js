@@ -13,7 +13,7 @@ router.get("/get-expert/:id", userController.getExpertById);
 router.get("/popular-programs" , getPopularProgramsByReviews );
 router.get("/latest-programs" , getLatestPrograms );
 
-router.get("/get-notifications" , userController.getNotificationByRegion);
+router.get("/get-notifications" , isAuth , userController.getNotificationByRegion);
 
 
 
