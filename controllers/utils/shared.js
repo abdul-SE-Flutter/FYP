@@ -105,6 +105,7 @@ exports.signWithEmailAndPassword = async (req, res, next) => {
       token: token,
       success: true,
       userId: user._id.toString(),
+      province : user.province
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
