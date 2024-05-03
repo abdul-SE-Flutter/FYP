@@ -50,7 +50,7 @@ exports.postProgram = async (req, res, next) => {
     const new_program = {
       programLink: programLink,
       category: category,
-      FAQs: FAQs,
+      // FAQs: FAQs,
       targetedRegions: targetedRegions,
       lastDateToApply: lastDateToApply,
       maxAge: maxAge,
@@ -144,7 +144,7 @@ exports.postProgram = async (req, res, next) => {
       await programSchema.save();
     }
 
-     const noti = await new Noti({related_program : program._id , regions : targetedRegions}).save();
+     const noti = await new Noti({related_program : program._id , regions : targetedRegions.split(",")}).save();
     res.status(201).json({
       message: `${minQualification} program posted to DB`,
       programId: program._id,
@@ -152,6 +152,7 @@ exports.postProgram = async (req, res, next) => {
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
+    console.log(err.message);
     if (req.file) {
       clearFile(
         path.join(__dirname, "..", "images", "posts/") + req.file.filename

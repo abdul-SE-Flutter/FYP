@@ -120,7 +120,7 @@ exports.getNotificationByRegion = async (req, res) => {
     const notifications = await Noti.find({
       regions: { $in: [user.province] },
       createdAt: { $gt: currentDate  , $lt : nextDayDate}
-    }).populate({path : "program" , select : " title description targetedRegions"});
+    }).populate({path : "related_program" , select : " title description targetedRegions"});
 
     return res.status(200).json({notifications});
   } catch (error) {
