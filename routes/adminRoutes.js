@@ -5,6 +5,7 @@ const adminUserController = require("../controllers/admin/adminUserController");
 const router = express.Router();
 const multer = require("multer");
 const storage = require("../multer/useMulter").getStorage("images/posts");
+const isAuth = require("../jwt/isAuth");
 function fileFilter(req, file, cb) {
   if (
     file.mimetype === "image/png" ||
@@ -47,6 +48,9 @@ router.post(
   ],
   adminController.signWithEmailAndPassword
 );
+
+router.get("/all-users" , isAuth , adminController.getAllUsers);
+router.delete("/delete-user/:uid" , isAuth , adminController.deleteAUser);
 module.exports = router;
 
 

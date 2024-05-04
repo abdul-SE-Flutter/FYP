@@ -6,6 +6,7 @@ const {
 } = require("../../models/program");
 
 const Noti = require("../../models/notification");
+const {User} = require("../../models/user");
 
 const path = require("path");
 const programIDValidator = require("../utils/IdValidator");
@@ -226,6 +227,52 @@ exports.updateProgram = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAllUsers=async(req ,res)=>{
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(400).json({message : "No such user exists"});
+    }
+        if(user.role!=="Admin"){
+          return res.status(400).json({message : "You are not admin , cannot perform this action"});
+        }
+
+        const users = await User.find({role: {$ne : "Admin"}}).select("id role username");
+        res.status(200).json({
+          message: "All users",
+          users: users,
+          success: true,
+        });
+
+  } catch (err) {
+     return res.status(500).json({ message: err.message });
+  }
+}
+
+exports.deleteAUser=async(req ,res)=>{
+  try {
+    const {uid} = req.params;
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(400).json({message : "No such user exists"});
+    }
+        if(user.role!=="Admin"){
+          return res.status(400).json({message : "You are not admin , cannot perform this action"});
+        }
+        
+        const userToDel = await User.findOne({role: {$ne : "Admin"} , _id :uid });
+        await userToDel.deleteOne();
+        res.status(201).json({
+           message : "User deleted successfully"
+        });
+
+  } catch (err) {
+     return res.status(500).json({ message: err.message });
+  }
+}
 
 
 
