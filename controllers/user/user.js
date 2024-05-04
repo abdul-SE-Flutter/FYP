@@ -127,3 +127,51 @@ exports.getNotificationByRegion = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.getMyDetails=async(req ,res)=>{
+  try {
+      const userId = req.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(400).json({ message: "No such user exists" });
+      }
+
+      if(!user.role.includes("Student")){
+        return res.status(400).json({ message: "You are not a student , cannot get profile" });
+      }
+
+      return res.status(200).json({ user });
+  } catch (error) {
+        return res.status(500).json({ message: error.message });
+  }
+}
+
+
+exports.updateMyDetails=async(req ,res)=>{
+  try {
+        const {username , age , password , province ,hasOtherScholarship , monthlyIncome ,role , cgpa}= req.body;
+      const userId = req.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(400).json({ message: "No such user exists" });
+      }
+
+      if(!user.role.includes("Student")){
+        return res.status(400).json({ message: "You are not a student , cannot edit profile" });
+      }
+
+      user.username=username;
+      user.age=age;
+      user.password=password;
+      user.province=province;
+      user.hasOtherScholarship=hasOtherScholarship;
+      user.monthlyIncome=monthlyIncome;
+      user.role=role;
+      user.cgpa=cgpa;
+      await user.save();
+         
+      return res.status(201).json({ message : "Details updated successfully!"});
+  } catch (error) {
+        return res.status(500).json({ message: error.message });
+  }
+}

@@ -14,6 +14,8 @@ router.get("/popular-programs" , getPopularProgramsByReviews );
 router.get("/latest-programs" , getLatestPrograms );
 
 router.get("/get-notifications" , isAuth , userController.getNotificationByRegion);
+router.get("/my-details" , isAuth , userController.getMyDetails);
+router.patch("/update-profile-details" , isAuth , userController.updateMyDetails);
 
 
 
