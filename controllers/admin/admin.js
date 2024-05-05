@@ -168,9 +168,7 @@ exports.deleteProgram = async (req, res, next) => {
     const programId = programIDValidator.validateID(req.params.programId);
     const program = await Program.findByIdAndDelete(programId);
     if (!program) {
-      const err = new Error(`program with id : ${programId} not found`);
-      err.statusCode = 404;
-      throw err;
+         return res.status(400).json({message : `program with id : ${programId} not found`});
     }
     if (program.imageUrl) {
       clearFile(
@@ -178,7 +176,7 @@ exports.deleteProgram = async (req, res, next) => {
           path.basename(program.imageUrl)
       );
     }
-    res.status(200).json({
+    res.status(201).json({
       message: "program deleted: program id is attached in data feild",
       data: program._id,
       success: true,
