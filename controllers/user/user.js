@@ -147,6 +147,8 @@ exports.getMyDetails=async(req ,res)=>{
 }
 
 
+
+
 exports.updateMyDetails=async(req ,res)=>{
   try {
         const {username , age , password , province ,hasOtherScholarship , monthlyIncome ,role , cgpa}= req.body;
@@ -173,5 +175,9 @@ exports.updateMyDetails=async(req ,res)=>{
       return res.status(201).json({ message : "Details updated successfully!"});
   } catch (error) {
         return res.status(500).json({ message: error.message });
-  }
+      }
+
+
 }
+
+

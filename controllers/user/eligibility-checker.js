@@ -64,7 +64,7 @@ exports.checkEligibility = async (req, res, next) => {
         if (userExists.cgpa === 0) {
           allPrograms = await UniversityStudentProgram.find({
             minCGPA: { $exists: false },
-          }).select("_id -__t");
+          }).select("_id title description date lastDateToApply noOfReviews");
 
           query = {
             minCGPA: { $exists: false },
@@ -97,7 +97,7 @@ exports.checkEligibility = async (req, res, next) => {
 
           partialyMatchingPrograms = await UniversityStudentProgram.find(
             query
-          ).select("_id -__t targetedRegions");
+          ).select("_id title description date lastDateToApply noOfReviews");
           query.$and = [
             {
               $or: [
