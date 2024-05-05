@@ -275,5 +275,61 @@ exports.deleteAUser=async(req ,res)=>{
 }
 
 
+exports.editProgram=async(req ,res)=>{
+  try {
+    const requestBody = {
+      lastDateToApply: req.body.lastDateToApply,
+      maxAge: req.body.maxAge,
+      maxIncomeLimit: req.body.maxIncomeLimit,
+      amountOfScholarship: req.body.amountOfScholarship,
+      minQualification: req.body.minQualification,
+      durationOfProgram: req.body.durationOfProgram,
+      targetedRegions: req.body.targetedRegions,
+      description: req.body.description,
+      title: req.body.title,
+      category: req.body.category,
+      eligibilityCriteria: req.body.eligibilityCriteria,
+      termsAndConditions: req.body.termsAndConditions,
+    };
+
+    const programId = req.params.programId;
+
+    const userId = req.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(400).json({message : "No such user exists"});
+    }
+        if(user.role!=="Admin"){
+          return res.status(400).json({message : "You are not admin , cannot perform this action"});
+        }
+
+        const program = await Program.findById(programId);
+        if (!program) {
+            return res.status(400).json({message : "No such program exists"});
+        }
+
+        program.lastDateToApply = requestBody.lastDateToApply;
+        program.maxAge = requestBody.maxAge;
+        program.maxIncomeLimit = requestBody.maxIncomeLimit;
+        program.amountOfScholarship = requestBody.amountOfScholarship;
+        program.minQualification = requestBody.minQualification;
+        program.durationOfProgram = requestBody.durationOfProgram;
+        program.targetedRegions = requestBody.targetedRegions;
+        program.description = requestBody.description;
+        program.title = requestBody.title;
+        program.category = requestBody.category;
+        program.eligibilityCriteria = requestBody.eligibilityCriteria;
+        program.termsAndConditions = requestBody.termsAndConditions;
+        await program.save();
+
+        
+        res.status(201).json({message : "Program updated successfully"});
+
+  } catch (error) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+
 
 exports.signWithEmailAndPassword = signWithEmailAndPassword;

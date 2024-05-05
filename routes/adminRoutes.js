@@ -51,6 +51,8 @@ router.post(
 
 router.get("/all-users" , isAuth , adminController.getAllUsers);
 router.delete("/delete-user/:uid" , isAuth , adminController.deleteAUser);
+
+router.patch("/program/edit/:programId" , isAuth , adminController.editProgram);
 module.exports = router;
 
 
