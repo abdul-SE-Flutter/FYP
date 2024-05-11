@@ -288,6 +288,18 @@ exports.editProgram=async(req ,res)=>{
       category: req.body.category,
       eligibilityCriteria: req.body.eligibilityCriteria,
       termsAndConditions: req.body.termsAndConditions,
+      FAQs: req.body.FAQs,
+      isPHD_program: req.body.isPHD_program,
+      requiresFirstDivison: req.body.requiresFirstDivison,
+      mustHoldInternationalUniversityAcceptance: req.body.mustHoldInternationalUniversityAcceptance,
+      minCGPA: req.body.minCGPA,
+      requiresEmployeeOfPublicSector: req.body.requiresEmployeeOfPublicSector,
+      targetedDisciplines: req.body.targetedDisciplines,
+      programLink: req.body.programLink,
+      durationOfProgram: req.body.durationOfProgram,
+      amountOfScholarship: req.body.amountOfScholarship,
+      requiresUniversityRank: req.body.requiresUniversityRank,
+      
     };
 
     const programId = req.params.programId;
@@ -319,13 +331,25 @@ exports.editProgram=async(req ,res)=>{
         program.category = requestBody.category;
         program.eligibilityCriteria = requestBody.eligibilityCriteria;
         program.termsAndConditions = requestBody.termsAndConditions;
+        program.FAQs = requestBody.FAQs;
+        program.isPHD_program = requestBody.isPHD_program;
+        program.requiresFirstDivison = requestBody.requiresFirstDivison;
+        program.mustHoldInternationalUniversityAcceptance = requestBody.mustHoldInternationalUniversityAcceptance;
+        program.minCGPA = requestBody.minCGPA;
+        program.requiresEmployeeOfPublicSector = requestBody.requiresEmployeeOfPublicSector;
+        program.targetedDisciplines = requestBody.targetedDisciplines;
+        program.programLink = requestBody.programLink;
+        program.durationOfProgram = requestBody.durationOfProgram;
+        program.amountOfScholarship = requestBody.amountOfScholarship;
+        program.requiresUniversityRank = requestBody.requiresUniversityRank;
+
         await program.save();
 
         
         res.status(201).json({message : "Program updated successfully"});
 
   } catch (error) {
-    return res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
