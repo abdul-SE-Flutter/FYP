@@ -275,6 +275,27 @@ exports.deleteAUser=async(req ,res)=>{
 
 exports.editProgram=async(req ,res)=>{
   try {
+     
+    let wtf = req.body.targetedDisciplines;
+    if (Array.isArray(wtf)) {
+      // Filter out any null values
+      const filteredArray = wtf.filter(item => item !== null);
+  
+      // Check if the filtered array has any elements
+      if (filteredArray.length > 0) {
+          // Save the filtered array to the database
+          wtf = filteredArray;
+          
+      } else {
+          // Handle the case where there are no valid strings to save
+          wtf = [];
+      }
+  } else {
+      // Handle the case where 'wtf' is not an array
+      wtf = [];
+  }
+  
+
     const requestBody = {
       lastDateToApply: req.body.lastDateToApply,
       maxAge: req.body.maxAge,
@@ -282,19 +303,19 @@ exports.editProgram=async(req ,res)=>{
       amountOfScholarship: req.body.amountOfScholarship,
       minQualification: req.body.minQualification,
       durationOfProgram: req.body.durationOfProgram,
-      targetedRegions: req.body.targetedRegions,
+      targetedRegions: Array.isArray(req.body?.targetedRegions) ? req.body.targetedRegions : req.body?.targetedRegions?.includes(",") ? req.body?.targetedRegions?.split(",") : !req.body?.targetedRegions ? undefined : req.body?.targetedRegions  ,
       description: req.body.description,
       title: req.body.title,
       category: req.body.category,
-      eligibilityCriteria: req.body.eligibilityCriteria,
-      termsAndConditions: req.body.termsAndConditions,
-      FAQs: req.body.FAQs,
+      eligibilityCriteria: req.body?.EligibilityCriteria?.includes(",") ? req.body.EligibilityCriteria.split(",") : !req.body.EligibilityCriteria ? undefined: [req.body.EligibilityCriteria] ,
+      termsAndConditions: req.body?.termsAndConditions?.includes(",") ? req.body.termsAndConditions.split(",") : !req.body.termsAndConditions ? undefined: [req.body.termsAndConditions] ,
+      // FAQs: req.body.FAQs,
       isPHD_program: req.body.isPHD_program,
       requiresFirstDivison: req.body.requiresFirstDivison,
       mustHoldInternationalUniversityAcceptance: req.body.mustHoldInternationalUniversityAcceptance,
       minCGPA: req.body.minCGPA,
       requiresEmployeeOfPublicSector: req.body.requiresEmployeeOfPublicSector,
-      targetedDisciplines: req.body.targetedDisciplines,
+      targetedDisciplines: wtf  ,
       programLink: req.body.programLink,
       durationOfProgram: req.body.durationOfProgram,
       amountOfScholarship: req.body.amountOfScholarship,
@@ -358,7 +379,9 @@ exports.editProgram=async(req ,res)=>{
         res.status(201).json({message : "Program updated successfully"});
 
   } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
+    
   }
 }
 
