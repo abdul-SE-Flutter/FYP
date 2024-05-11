@@ -172,7 +172,7 @@ exports.updateMyDetails=async(req ,res)=>{
       user.cgpa=cgpa;
       await user.save();
          
-      return res.status(201).json({ message : "Details updated successfully!"});
+      return res.status(201).json({ message : "Details updated successfully!" , user});
   } catch (error) {
         return res.status(500).json({ message: error.message });
       }
