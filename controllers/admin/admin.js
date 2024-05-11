@@ -298,9 +298,15 @@ exports.editProgram=async(req ,res)=>{
       programLink: req.body.programLink,
       durationOfProgram: req.body.durationOfProgram,
       amountOfScholarship: req.body.amountOfScholarship,
-      requiresUniversityRank: req.body.requiresUniversityRank,
+      requiresUniversityRank: req.body.requiresUniversityRank
+      ,
+      minSSCPrcntg: req.body.minSSCPrcntg,
+      minSHCPrcntg: req.body.minSHCPrcntg,
+      minSemester: req.body.minSemester
       
     };
+
+    console.log(requestBody);
 
     const programId = req.params.programId;
 
@@ -342,6 +348,9 @@ exports.editProgram=async(req ,res)=>{
         program.durationOfProgram = requestBody.durationOfProgram;
         program.amountOfScholarship = requestBody.amountOfScholarship;
         program.requiresUniversityRank = requestBody.requiresUniversityRank;
+        program.minSSCPrcntg = requestBody.minSSCPrcntg;
+        program.minSHCPrcntg = requestBody.minSHCPrcntg;
+        program.minSemester = requestBody.minSemester;
 
         await program.save();
 
