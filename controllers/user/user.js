@@ -7,6 +7,8 @@ const { Stripe } = require("stripe");
 const { createConfirmedPaymentIntent } = require("../../services/stripe");
 exports.getPrograms = getPrograms;
 const Noti = require("../../models/notification");
+const fs = require("fs");
+const path = require("path");
 
 exports.getSingleProgram = getSingleProgram;
 
@@ -178,6 +180,38 @@ exports.updateMyDetails=async(req ,res)=>{
       }
 
 
+}
+
+exports.updateProfilePic=async(req , res)=>{
+     try {
+      const userId = req.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(400).json({ message: "No such user exists" });
+      }
+
+      if(req.file){
+            
+        if(user?.imageUrl){
+          const filePath = path.join(__dirname, ".." , "..", user.imageUrl.split("localhost:8080/")[1]);
+                           // Check if file exists
+        // fs.access(filePath);
+
+        // File exists, delete it
+         fs.unlinkSync(filePath , ()=>{
+
+         });
+
+        }
+
+        user.imageUrl = "http://localhost:8080/images/user_profile_pics/" + req.file.filename;
+        await user.save();
+      }
+
+      res.status(201).json({message : "Profile pic updated successfully!" , user});
+     } catch (error) {
+        return res.status(500).json({ message: error.message });
+     }
 }
 
 
