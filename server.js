@@ -46,6 +46,9 @@ app.use("/chat", chatRoutes);
 app.use("/eligibilityChecher", eligibilityCheckerRoutes);
 app.use("/review" , reviewRoutes);
 
+app.use("/",(request,response)=>{
+  response.send("Welcome to PakOpperTunity Hub");
+})
 
 app.use("/stripe/test", (req, res) => {
   res.send(`<h1>Payment Successfull<h1>`);
