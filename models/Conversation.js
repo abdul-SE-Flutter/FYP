@@ -1,18 +1,21 @@
-const { Timestamp } = require("mongodb");
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const conversationSchema = new Schema({
-  candidateId: {
-    type: Schema.Types.ObjectId,
+const mongoose = require('mongoose');
+
+const chatBoxSchema = new mongoose.Schema({
+  sender: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
     required: true,
-    ref: "User",
   },
-  agentId: {
-    type: Schema.Types.ObjectId,
+  receiver: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
     required: true,
-    ref: "Agent",
-  },
+  } ,
+
+  latest_message : {type: String}
+},{
+  timestamps:true
 });
 
-module.exports = mongoose.model("Conversation", conversationSchema);
+module.exports= mongoose.model('Conversation', chatBoxSchema);
